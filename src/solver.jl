@@ -3,7 +3,7 @@ import JuMP, GLPK
 global total_counts = 0
 global counts = 0
 
-function action_info(p::POMCPPlanner, b; tree_in_info=false)
+function action_info(p::CCPOMCPPlanner, b; tree_in_info=false)
     # println("Before before Rew")
     # all_rew = []
     # for i in values(reward_vectors(cm))
@@ -27,7 +27,7 @@ function action_info(p::POMCPPlanner, b; tree_in_info=false)
     local a::actiontype(p.problem)
     info = Dict{Symbol, Any}()
     try
-        tree = POMCPTree(p.problem, b, p.solver.tree_queries)
+        tree = CCPOMCPTree(p.problem, b, p.solver.tree_queries)
 
         a = search(p, b, tree, info, λ, α, τ, ν)
 
@@ -63,7 +63,7 @@ function action_info(p::POMCPPlanner, b; tree_in_info=false)
     return a, info
 end
 
-action(p::POMCPPlanner, b) = first(action_info(p, b))
+action(p::CCPOMCPPlanner, b) = first(action_info(p, b))
 
 function greedy_action(t,h,λ,ν,p)
     # t.total_greedy_actions[1] += 1
@@ -131,7 +131,7 @@ function greedy_action(t,h,λ,ν,p)
     return [a,ha,weighted_best_nodes]
 end
 
-function search(p::POMCPPlanner, b, t::POMCPTree, info::Dict, λ, α, τ, ν)
+function search(p::CCPOMCPPlanner, b, t::CCPOMCPTree, info::Dict, λ, α, τ, ν)
     λ_count = 1
     all_terminal = true
     nquery = 0
@@ -164,9 +164,9 @@ function search(p::POMCPPlanner, b, t::POMCPTree, info::Dict, λ, α, τ, ν)
 
             clamp!(λ,0,ub)
             if i == 1000
-                p._tree = POMCPTree(p.problem, b, p.solver.tree_queries)
+                p._tree = CCPOMCPTree(p.problem, b, p.solver.tree_queries)
             end
-            simulate(p, s, POMCPObsNode(t, 1), p.solver.max_depth, λ, ν)
+            simulate(p, s, CCPOMCPObsNode(t, 1), p.solver.max_depth, λ, ν)
             ####GREEDY POLICY HERE:
             a,ha,wb = greedy_action(t,h,λ,ν,p)
             # Constraint Implementation
@@ -210,9 +210,9 @@ function search(p::POMCPPlanner, b, t::POMCPTree, info::Dict, λ, α, τ, ν)
     return a#t.a_labels[best_node]
 end
 
-solve(solver::POMCPSolver, c_pomdp::ConstrainedPOMDPs.ConstrainedPOMDPWrapper) = POMCPPlanner(solver, c_pomdp)
+solve(solver::CCPOMCPSolver, c_pomdp::ConstrainedPOMDPs.ConstrainedPOMDPWrapper) = CCPOMCPPlanner(solver, c_pomdp)
 
-function simulate(p::POMCPPlanner, s, hnode::POMCPObsNode, steps::Int, λ::Vector{Float64}, ν::Float64)
+function simulate(p::CCPOMCPPlanner, s, hnode::CCPOMCPObsNode, steps::Int, λ::Vector{Float64}, ν::Float64)
     if steps == 0 || isterminal(p.problem, s)
         return [0.0,zeros(length(p.problem.constraints))]
     end
@@ -267,13 +267,13 @@ function simulate(p::POMCPPlanner, s, hnode::POMCPObsNode, steps::Int, λ::Vecto
         v::Float64,c_roll::Vector{Float64} = estimate_value(p.solved_estimator,
                            p.problem,
                            sp,
-                           POMCPObsNode(t, hao),
+                           CCPOMCPObsNode(t, hao),
                            steps-1) ######################################THIS SHOULD PROBS RETURN A COST, TOO
         # println((v,c_roll))
         R::Float64 = r + discount(p.problem)*v
         C::Vector{Float64} = c + discount(p.problem)*c_roll
     else
-        R,C = [r,c] + discount(p.problem).*simulate(p, sp, POMCPObsNode(t, hao), steps-1,λ,ν)
+        R,C = [r,c] + discount(p.problem).*simulate(p, sp, CCPOMCPObsNode(t, hao), steps-1,λ,ν)
     end
     t.total_n[h] += 1
     t.n[ha] += 1
