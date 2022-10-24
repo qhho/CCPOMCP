@@ -111,7 +111,6 @@ Partially Observable Monte Carlo Planning Solver.
 """
 
 @with_kw mutable struct CCPOMCPSolver <: AbstractCCPOMCPSolver
-    constraints::Vector{Float64}
     max_depth::Int          = 20
     c::Float64              = 1.0
     tree_queries::Int       = 1000
@@ -227,6 +226,7 @@ end
 
 mutable struct CCPOMCPPlanner{P, SE, RNG} <: Policy
     solver::CCPOMCPSolver
+    constraints::Vector{Float64}
     problem::P
     solved_estimator::SE
     rng::RNG
@@ -237,7 +237,7 @@ end
 
 function CCPOMCPPlanner(solver::CCPOMCPSolver, c_pomdp::ConstrainedPOMDPs.ConstrainedPOMDPWrapper)
     se = convert_estimator(solver.estimate_value, solver, c_pomdp)
-    return CCPOMCPPlanner(solver, c_pomdp, se, solver.rng, Int[], nothing, nothing)
+    return CCPOMCPPlanner(solver, c_pomdp.constraints, c_pomdp, se, solver.rng, Int[], nothing, nothing)
 end
 
 Random.seed!(p::CCPOMCPPlanner, seed) = Random.seed!(p.rng, seed)

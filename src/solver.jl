@@ -47,9 +47,9 @@ function action_info(p::CCPOMCPPlanner, b; tree_in_info=false)
         # @show act_dist
         # @show (p.solver.constraints - pdf(act_dist,act_to_node[a]).*tree.c_bar[act_to_node[a]]-sum_term)
         # @show (discount(p.problem)*pdf(act_dist,act_to_node[a]))
-        p.solver.constraints = (p.solver.constraints - pdf(act_dist,act_to_node[a]).*tree.c_bar[act_to_node[a]]-sum_term)./(discount(p.problem)*pdf(act_dist,act_to_node[a]))
+        p.constraints = (p.constraints - pdf(act_dist,act_to_node[a]).*tree.c_bar[act_to_node[a]]-sum_term)./(discount(p.problem)*pdf(act_dist,act_to_node[a]))
 
-        # @show p.solver.constraints
+        # @show p.constraints
 
         if p.solver.tree_in_info || tree_in_info
             info[:tree] = tree
@@ -120,8 +120,8 @@ function greedy_action(t,h,λ,ν,p)
 
     if length(best_nodes) != 1
         # t.total_LP[1] += 1
-        weighted_best_nodes = LP_Exact(best_nodes,λ,t.c[best_nodes],p.solver.constraints)
-        # weighted_best_nodes = LP_10(best_nodes,λ,t.c[best_nodes],p.solver.constraints)
+        weighted_best_nodes = LP_Exact(best_nodes,λ,t.c[best_nodes],p.constraints)
+        # weighted_best_nodes = LP_10(best_nodes,λ,t.c[best_nodes],p.constraints)
     elseif length(best_nodes) == 1
         weighted_best_nodes = SparseCat(best_nodes,[1.0])
     end
@@ -170,7 +170,7 @@ function search(p::CCPOMCPPlanner, b, t::CCPOMCPTree, info::Dict, λ, α, τ, ν
             ####GREEDY POLICY HERE:
             a,ha,wb = greedy_action(t,h,λ,ν,p)
             # Constraint Implementation
-            constraints = p.solver.constraints
+            constraints = p.constraints
             # @show λ, ha, t.c[ha]
 
 
