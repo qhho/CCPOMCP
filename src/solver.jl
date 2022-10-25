@@ -220,7 +220,7 @@ function simulate(p::CCPOMCPPlanner, s, hnode::CCPOMCPObsNode, steps::Int, λ::V
     t = hnode.tree
     h = hnode.node
 
-    t.total_sim[1] += 1
+    # t.total_sim[1] += 1
 
     # ltn = log(t.total_n[h])
     # best_nodes = empty!(p._best_node_mem)
@@ -260,7 +260,7 @@ function simulate(p::CCPOMCPPlanner, s, hnode::CCPOMCPObsNode, steps::Int, λ::V
     # ha = 1
     # wb = SparseCat([1],[1.0])
     ##########################
-    sp, o, r, c = c_gen(p.problem, s, a, p.rng)#@gen(:sp, :o, :r)(p.problem, s, a, p.rng) #ADD COST GENERATION
+    sp, o, r, c = ConstrainedPOMDPs.gen(p.problem, s, a, p.rng) #@gen(:sp, :o, :r)(p.problem, s, a, p.rng) #ADD COST GENERATION
     hao = get(t.o_lookup, (ha, o), 0)
     if hao == 0
         hao = insert_obs_node!(t, p.problem, ha, sp, o)

@@ -82,7 +82,7 @@ function rollout(est::SolvedPORollout, c_pomdp::ConstrainedPOMDPs.ConstrainedPOM
     sim = ConstrainedPOMDPs.RolloutSimulator(est.rng,
                            steps)
     # println(typeof(sim))
-    return POMDPs.simulate(sim, c_pomdp, est.policy, est.updater, b, start_state)
+    return ConstrainedPOMDPs.simulate(sim, c_pomdp, est.policy, est.updater, b, start_state)
 end
 #
 # @POMDP_require rollout(est::SolvedPORollout, pomdp::POMDPs.POMDP, start_state, h::BeliefNode, steps::Int) begin
