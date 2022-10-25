@@ -260,7 +260,7 @@ function simulate(p::CCPOMCPPlanner, s, hnode::CCPOMCPObsNode, steps::Int, λ::V
     # ha = 1
     # wb = SparseCat([1],[1.0])
     ##########################
-    sp, o, r, c = ConstrainedPOMDPs.gen(p.problem, s, a, p.rng) #@gen(:sp, :o, :r)(p.problem, s, a, p.rng) #ADD COST GENERATION
+    sp, o, r, c = gen(p.problem, s, a, p.rng) #@gen(:sp, :o, :r)(p.problem, s, a, p.rng) #ADD COST GENERATION
     hao = get(t.o_lookup, (ha, o), 0)
     if hao == 0
         hao = insert_obs_node!(t, p.problem, ha, sp, o)
