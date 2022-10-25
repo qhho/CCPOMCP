@@ -14,7 +14,6 @@ using POMDPs
 using Parameters
 using ParticleFilters
 using POMDPTools
-using POMDPSimulators
 using CPUTime
 using Colors
 using Random
