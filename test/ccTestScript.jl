@@ -1,11 +1,15 @@
+
+using CCPOMCP
 using POMDPs, Random, POMDPModels
-include("../ConstrainedPOMDPs.jl")
-using .ConstrainedPOMDPs
+using ConstrainedPOMDPs
+#include("../ConstrainedPOMDPs.jl")
+using ConstrainedPOMDPs
+
 # include("/home/bkraske/Documents/Research/JuliaCode/branch/ConstrainedPOMDPs.jl/models/ConstrainedRockSample.jl")
 # using BasicPOMCP
-include("CC-POMCP.jl")
+#include("CC-POMCP.jl")
 using BeliefUpdaters
-using CSV
+#using CSV
 using Dates
 using Statistics
 using DataFrames
@@ -183,7 +187,7 @@ function main_loop(m,t,b0,up)
     res_df = DataFrame([:Time=>time_mat,:N_Runs=>n_mat,:Disc_Rew=>r_mat,:Disc_Cost=>c_mat,
                         :Mean_Disc_Rew=>fill(trial_mean_r,n_runs),:Stdm_Rew=>fill(trial_stdm_r,n_runs),
                         :Mean_Disc_Cost=>fill(trial_mean_c,n_runs),:Stdm_Cost=>fill(trial_stdm_c,n_runs)])
-    CSV.write("RS_Results_"*Dates.format(now(),"dd_mm_HH:MM:SS")*".csv", res_df)
+    #CSV.write("RS_Results_"*Dates.format(now(),"dd_mm_HH:MM:SS")*".csv", res_df)
     # CSV.write("RS_Params_"*Dates.format(now(),"dd_mm_HH:MM:SS")*".csv", planner)
     return res_df
 end
